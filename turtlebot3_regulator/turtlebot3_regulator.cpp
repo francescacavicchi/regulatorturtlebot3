@@ -43,19 +43,8 @@ private:
   {
      if(abs(vel_x)<pow(10,-2)) {
         std::cout << "inserire le coordinate di riferimento\n (prima x -nella forma double- press enter e inserire y -forma double-):";
-        double x, y;
-        std::cin >> x;
-        std::cin >> y;
-            do{
-            std::cout << "errore - inserire nuovamente le coordinate:";
-            std::cin >> x;
-            std::cin >> y;
-                 if(isnan(x)==0 && isnan(y)==0){
-                 break;
-                 }
-}while(isnan(x)==1 || isnan(y)==1);
-        xRef = x;
-        yRef = y;
+        std::cin >> xRef;
+        std::cin >> yRef;
         std::cout << " coordinate inserite:\n x =" << xRef;
         std::cout << "y =" << yRef;
         }
