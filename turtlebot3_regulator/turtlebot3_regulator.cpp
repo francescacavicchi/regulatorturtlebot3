@@ -24,7 +24,7 @@
 
 using namespace std::chrono_literals;
         double xRef = 0, yRef = 0;
-        double vel_x = 0, vel_y = 0, vel_theta = 0;
+        double vel_x = 0, vel_theta = 0;
 
 class Regulator : public rclcpp::Node{
 public:
@@ -41,7 +41,7 @@ private:
 
   void vel_callback(const nav_msgs::msg::Odometry::SharedPtr msg) const
   {
-     if(abs(vel_x)<pow(10,-2) && abs(vel_y)<pow(10,-2)){
+     if(abs(vel_x)<pow(10,-2)) {
         std::cout << "inserire le coordinate di riferimento\n (prima x -nella forma double- press enter e inserire y -forma double-):";
         double x, y;
         std::cin >> x;
@@ -87,16 +87,13 @@ private:
       u2 = -v1*(sin(theta)/l) + v2*(cos(theta)/l);
 
 
-     vel_x = u1*cos(theta) - l*sin(theta)*u2;
+     vel_x = u1;
 //    printf("%f\n", vel_x);
-
-    vel_y = u1*sin(theta) + l*cos(theta)*u2;
-//    printf("%f\n", vel_y);
 
     vel_theta = u2;
 //    printf("%f\n", vel_theta);
 
-    if(abs(vel_x)<pow(10,-2) && abs(vel_y)<pow(10,-2)){
+    if(abs(vel_x)<pow(10,-2)) {
       geometry_msgs::msg::Twist cmd_vel;
       cmd_vel.linear.y = 0;
       cmd_vel.linear.x = 0;
@@ -118,8 +115,8 @@ private:
 //    }
     else{
       geometry_msgs::msg::Twist cmd_vel;
-      cmd_vel.linear.y = vel_y;
-      cmd_vel.linear.x = vel_x;
+      cmd_vel.linear.x = u1;
+      cmd_vel.linear.y = 0;
       cmd_vel.linear.z = 0;
 
       cmd_vel.angular.z = vel_theta;
