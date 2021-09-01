@@ -25,6 +25,7 @@
 using namespace std::chrono_literals;
         double xRef = 0, yRef = 0;
         double vel_x = 0, vel_theta = 0;
+        double ex=0, ey=0;
 
 class Regulator : public rclcpp::Node{
 public:
@@ -41,13 +42,14 @@ private:
 
   void vel_callback(const nav_msgs::msg::Odometry::SharedPtr msg) const
   {
-     if(abs(vel_x)<pow(10,-2)) {
+     if(abs(ex)<pow(10,-3) && abs(ey)<pow(10,-3)){
         std::cout << "inserire le coordinate di riferimento\n (prima x -nella forma double- press enter e inserire y -forma double-):";
         std::cin >> xRef;
         std::cin >> yRef;
         std::cout << " coordinate inserite:\n x =" << xRef;
         std::cout << "y =" << yRef;
         }
+
 
     double xE, yE, theta;
     double l=0.1;
@@ -61,20 +63,18 @@ private:
     yE = msg->pose.pose.position.y + l*sin(theta);
 
     //calcolo dell'errore
-    double ex, ey;
     ex = xE - xRef;
     ey = yE - yRef;
 
     // k1 e k2 (usati anche per y)
-    double k1=0.2, k2=0.2;
+    double k1=0.1, k2=0.1;
+
 
     double v1, v2, u1, u2;
       v1 = -k1*ex;
       v2 = -k2*ey;
-
       u1 = cos(theta)*v1 + sin(theta)*v2;
       u2 = -v1*(sin(theta)/l) + v2*(cos(theta)/l);
-
 
      vel_x = u1;
 //    printf("%f\n", vel_x);
@@ -82,7 +82,7 @@ private:
     vel_theta = u2;
 //    printf("%f\n", vel_theta);
 
-    if(abs(vel_x)<pow(10,-2)) {
+    if(abs(ex)<pow(10,-3) && abs(ey)<pow(10,-3)) {
       geometry_msgs::msg::Twist cmd_vel;
       cmd_vel.linear.y = 0;
       cmd_vel.linear.x = 0;
@@ -92,16 +92,6 @@ private:
       cmd_vel.angular.x = 0;
       vel_->publish(cmd_vel);
     }
-//    else if(abs(vel_y)>0.22 && abs(vel_x)>0.22){
-//      geometry_msgs::msg::Twist cmd_vel;
-//      cmd_vel.linear.y = 0.22;
-//      cmd_vel.linear.x = 0.22;
-//      cmd_vel.linear.z = 0;
-//      cmd_vel.angular.z = 2.84;
-//      cmd_vel.angular.y = 0;
-//      cmd_vel.angular.x = 0;
-//      vel_->publish(cmd_vel);
-//    }
     else{
       geometry_msgs::msg::Twist cmd_vel;
       cmd_vel.linear.x = u1;
@@ -112,8 +102,12 @@ private:
       cmd_vel.angular.y = 0;
       cmd_vel.angular.x = 0;
       vel_->publish(cmd_vel);
-      RCLCPP_INFO(this->get_logger(), "x: '%f',/n y: '%f',/n theta: '%f',/n",
-      xE, yE, msg->pose.pose.position.y );
+      RCLCPP_INFO(this->get_logger(), "x: %f, y: %f ",
+      xE, yE);
+      RCLCPP_INFO(this->get_logger(), "input: %f %f",
+      xRef, yRef);
+      RCLCPP_INFO(this->get_logger(), "error: %f %f",
+      ex, ey);
       }
     }
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr subscription_;
