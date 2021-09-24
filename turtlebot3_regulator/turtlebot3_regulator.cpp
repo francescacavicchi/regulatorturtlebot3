@@ -93,7 +93,7 @@ private:
       vel_->publish(cmd_vel);
     }
     else{
-      if(abs(u1)>0.22){
+      if(u1>0.22){
         geometry_msgs::msg::Twist cmd_vel;
         cmd_vel.linear.x = 0.22;
         cmd_vel.linear.y = 0;
@@ -110,30 +110,13 @@ private:
         RCLCPP_INFO(this->get_logger(), "error: %f %f",
         ex, ey);
       }
-      else if (abs(u2)>2.84) {
+      else if (u1<-0.22){
         geometry_msgs::msg::Twist cmd_vel;
-        cmd_vel.linear.x = vel_x;
+        cmd_vel.linear.x = -0.22;
         cmd_vel.linear.y = 0;
         cmd_vel.linear.z = 0;
 
-        cmd_vel.angular.z = 2.84;
-        cmd_vel.angular.y = 0;
-        cmd_vel.angular.x = 0;
-        vel_->publish(cmd_vel);
-        RCLCPP_INFO(this->get_logger(), "x: %f, y: %f ",
-        xE, yE);
-        RCLCPP_INFO(this->get_logger(), "input: %f %f",
-        xRef, yRef);
-        RCLCPP_INFO(this->get_logger(), "error: %f %f",
-        ex, ey);
-      }
-      else if (abs(u1)>0.22 && abs(u2)>2.84 ) {
-        geometry_msgs::msg::Twist cmd_vel;
-        cmd_vel.linear.x = 0.22;
-        cmd_vel.linear.y = 0;
-        cmd_vel.linear.z = 0;
-
-        cmd_vel.angular.z = 2.84;
+        cmd_vel.angular.z = vel_theta;
         cmd_vel.angular.y = 0;
         cmd_vel.angular.x = 0;
         vel_->publish(cmd_vel);
