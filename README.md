@@ -1,5 +1,5 @@
 # regulatorturtlebot3
 
-inserire la cartella di turtlebot3_regulator all'interno della cartella di gazebo (indirizzo ./turtlebot_ws/src/turtlebot3_simulations/turtlebot3_gazebo)
-aggiornare il file CMakesLists.txt già presente nella cartella con quello fornito
-comando di lancio del regolatore: ros2 run turtlebot3_gazebo turtlebot3_regulator
+PI controller via feedback linearization with the purpouse to implement autonomous navigation for a wheeled robot.
+Once the desired coordinates after the launch of the and the motion will stop once the position error is considered trascurable.
+The node was tested on the turtlebot3 package available for ros2. 
